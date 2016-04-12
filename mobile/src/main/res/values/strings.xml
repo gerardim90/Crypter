@@ -2,5 +2,6 @@
     <string name="app_name">Crypter</string>
     <string name="action_settings">Settings</string>
     <string name="button_encrypt">Encrypt</string>
-    <string name="button_decrypt">Decrypt</string>
+    <string name="button_send">Send</string>
+    <string name="raw">Generated raw encrypted message</string>
 </resources>

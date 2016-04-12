@@ -1,56 +1,46 @@
 package android.crypter;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
-
 import android.support.v7.app.ActionBarActivity;
+import android.text.TextUtils;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ArrayAdapter;
 
-import android.os.Bundle;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.Wearable;
 
-import android.view.Menu;
-
-import android.view.MenuItem;
-
-
-
-import android.app.Activity;
-
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.SecureRandom;
-
-
 
 import javax.crypto.Cipher;
 
 
 
-import android.widget.*;
-
-
-
-import android.view.View;
-
-import android.view.View.OnClickListener;
-
-
-
-import java.security.KeyPair;
-
-import java.security.KeyPairGenerator;
-
-import java.security.PrivateKey;
-
-import java.security.PublicKey;
-
-
 
 public class EncryptActivity extends ActionBarActivity {
 
+    private static final String START_ACTIVITY = "/start_activity";
+
+    private static final String WEAR_MESSAGE_PATH = "/CrypterActivity";
+
+    private static GoogleApiClient mApiClient;
+
+    private static ArrayAdapter mAdapter;
+
+    private static EditText Raw;
+
+    public static void setRaw(EditText Raw) {
+        EncryptActivity.Raw = Raw;
+    }
 
     @Override
 
@@ -68,24 +58,25 @@ public class EncryptActivity extends ActionBarActivity {
 
         super.onCreate(savedInstanceState);
 
+        initGoogleApiClient();
+
         setContentView(R.layout.activity_encrypt);
 
         final Button enButton = (Button) findViewById(R.id.enbutton);
 
-        final Button deButton = (Button) findViewById(R.id.debutton);
+        final Button sendButton = (Button) findViewById(R.id.sendbutton);
 
         final EditText input = (EditText) findViewById(R.id.Input);
 
-        final EditText Raw = (EditText) findViewById(R.id.raw);
+         setRaw ( (EditText) findViewById(R.id.raw));
 
-        final EditText output = (EditText) findViewById(R.id.OriginText);
+
 
         enButton.setOnClickListener(new OnClickListener() {
 
             public void onClick(View v) {
 
                 try {
-
 
                     Raw.setText(encrypt(input.getText().toString()));
 
@@ -102,28 +93,20 @@ public class EncryptActivity extends ActionBarActivity {
 
         });
 
-        deButton.setOnClickListener(new OnClickListener() {
+        sendButton.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick( View view ) {
+                String text = Raw.getText().toString();
+                if ( !TextUtils.isEmpty(text) ) {
+                    mAdapter.add( text );
+                    mAdapter.notifyDataSetChanged();
 
-            public void onClick(View v) {
-
-                try {
-
-
-                    output.setText(String.valueOf(decrypt(Raw.getText()
-
-                            .toString())));
-
-                } catch (Exception e) {
-
-// TODO Auto-generated catch block
-
-                    e.printStackTrace();
-
+                    sendMessage( WEAR_MESSAGE_PATH, text );
                 }
-
             }
-
         });
+
+        disconnect();
 
     }
 
@@ -255,4 +238,39 @@ public class EncryptActivity extends ActionBarActivity {
 
     }
 
+    private void initGoogleApiClient() {
+
+        mApiClient = new GoogleApiClient.Builder( this ).addApi( Wearable.API ).build();
+
+        mApiClient.connect();
+    }
+
+
+    public void onConnected(Bundle bundle) {
+        sendMessage(START_ACTIVITY, "");
+    }
+
+    private void sendMessage( final String path, final String text ) {
+        new Thread( new Runnable() {
+            @Override
+            public void run() {
+                NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
+                for(Node node : nodes.getNodes()) {
+                    MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
+                            mApiClient, node.getId(), path, text.getBytes() ).await();
+                }
+
+                runOnUiThread( new Runnable() {
+                    @Override
+                    public void run() {
+                        Raw.setText("");
+                    }
+                });
+            }
+        }).start();
+    }
+
+    protected void disconnect() {
+        mApiClient.disconnect();
+    }
 }

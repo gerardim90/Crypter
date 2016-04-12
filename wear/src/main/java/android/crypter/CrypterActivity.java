@@ -3,15 +3,21 @@ package android.crypter;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.wearable.view.WatchViewStub;
+import android.widget.EditText;
 import android.widget.TextView;
+
 
 public class CrypterActivity extends Activity {
 
     private TextView mTextView;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        final EditText output = (EditText) findViewById(R.id.OriginText);
+
         setContentView(R.layout.activity_crypter);
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {

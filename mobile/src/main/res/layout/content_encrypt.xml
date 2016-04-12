@@ -50,7 +50,7 @@
 
         android:layout_gravity="left"
 
-        android:text="Encrypt it by PublicKey"
+        android:text="Encrypt"
 
         android:layout_below="@+id/Input"
         android:layout_centerHorizontal="true" />
@@ -64,29 +64,16 @@
         android:layout_width="match_parent"
 
         android:layout_height="wrap_content"
-        android:text="Generated raw encrypted message"
+        android:text="@string/raw"
 
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="180dp" />
 
-    <EditText
-
-        android:id="@+id/OriginText"
-
-        android:layout_width="match_parent"
-
-        android:layout_height="wrap_content"
-        android:text="Original Message"
-
-
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="100dp" />
 
     <Button
 
-        android:id="@+id/debutton"
+        android:id="@+id/sendbutton"
 
         android:layout_width="wrap_content"
 
@@ -94,7 +81,7 @@
 
         android:layout_gravity="left"
 
-        android:text="Decrypt it by PrivateKey"
+        android:text="@string/button_send"
 
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
