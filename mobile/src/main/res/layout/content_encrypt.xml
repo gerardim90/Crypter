@@ -12,17 +12,27 @@
     tools:context="android.crypter.EncryptActivity"
     tools:showIn="@layout/activity_encrypt">
 
+        <ListView
+            android:id="@+id/list_view"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:transcriptMode="normal"
+            android:stackFromBottom="false"
+            android:cacheColorHint="#00000000"
+            android:drawSelectorOnTop="false"
+            android:visibility="invisible"
+            android:layout_below="@+id/text"/>
 
 
-    <TextView android:id="@+id/text"
+        <TextView android:id="@+id/text"
 
-        android:layout_width="match_parent"
+            android:layout_width="match_parent"
 
-        android:layout_height="wrap_content"
+            android:layout_height="wrap_content"
 
-        android:text="              Let&apos;s encrypt your message!"
-        android:textColor="#0b0000"
-        android:textSize="18dp" />
+            android:text="              Let&apos;s encrypt your message!"
+            android:textColor="#0b0000"
+            android:textSize="18dp" />
 
 
 
