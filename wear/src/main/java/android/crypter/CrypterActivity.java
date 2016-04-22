@@ -15,7 +15,6 @@ import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Wearable;
 
-import javax.crypto.Cipher;
 
 
 public class CrypterActivity extends Activity implements MessageApi.MessageListener, GoogleApiClient.ConnectionCallbacks {
@@ -25,15 +24,13 @@ public class CrypterActivity extends Activity implements MessageApi.MessageListe
     private ArrayAdapter<String> mAdapter;
     private Button deButton;
     private ListView mListView;
-    public String raw;
+    private String raw;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crypter);
         mListView = (ListView) findViewById(R.id.list);
-      //  raw = (TextView) findViewById(R.id.list);
-       // original = (TextView) findViewById(R.id.list);
         deButton = (Button) findViewById(R.id.debutton);
 
 
@@ -48,10 +45,25 @@ public class CrypterActivity extends Activity implements MessageApi.MessageListe
         deButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
-                    mAdapter.add(String.valueOf(decrypt(raw)));
+                    setRaw(mAdapter.getItem(0));
+                    mAdapter.add(CryptoLibrary.getLibrary().decrypt("secure" , getRaw()));
                     mAdapter.notifyDataSetChanged();
                 } catch (Exception e) {
                     e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onMessageReceived( final MessageEvent messageEvent ) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (messageEvent.getPath().equalsIgnoreCase(WEAR_MESSAGE_PATH)) {
+                    setRaw(new String(messageEvent.getData()));
+                    mAdapter.add(getRaw());
+                    mAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -79,19 +91,7 @@ public class CrypterActivity extends Activity implements MessageApi.MessageListe
         super.onStart();
     }
 
-    @Override
-    public void onMessageReceived( final MessageEvent messageEvent ) {
-        runOnUiThread( new Runnable() {
-            @Override
-            public void run() {
-                if( messageEvent.getPath().equalsIgnoreCase( WEAR_MESSAGE_PATH ) ) {
-                    raw = new String(messageEvent.getData());
-                    mAdapter.add(raw);
-                    mAdapter.notifyDataSetChanged();
-                }
-            }
-        });
-    }
+
 
     @Override
     public void onConnected(Bundle bundle) {
@@ -122,54 +122,14 @@ public class CrypterActivity extends Activity implements MessageApi.MessageListe
     }
 
 
-    private final static String decrypt(String data) {
 
-        try {
 
-            return new String(decrypt(hex2byte(data.getBytes())));
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-
-        }
-
-        return null;
-
+    public String getRaw() {
+        return raw;
     }
 
-
-    private static byte[] decrypt(byte[] src) throws Exception {
-
-        Cipher cipher = Cipher.getInstance(CryptoLibrary.getLibrary().RSA);
-
-        cipher.init(Cipher.DECRYPT_MODE, CryptoLibrary.getLibrary().rk);
-
-        return cipher.doFinal(src);
-
+    public void setRaw(String raw) {
+        this.raw = raw;
     }
-
-    private static byte[] hex2byte(byte[] b) {
-
-        if ((b.length % 2) != 0)
-
-            throw new IllegalArgumentException("hello");
-
-
-        byte[] b2 = new byte[b.length / 2];
-
-
-        for (int n = 0; n < b.length; n += 2) {
-
-            String item = new String(b, n, 2);
-
-            b2[n / 2] = (byte) Integer.parseInt(item, 16);
-
-        }
-
-        return b2;
-
-    }
-
 }
 

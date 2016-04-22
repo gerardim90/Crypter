@@ -18,10 +18,6 @@ import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
-import java.security.PublicKey;
-
-
-import javax.crypto.Cipher;
 
 
 public class EncryptActivity extends Activity implements GoogleApiClient.ConnectionCallbacks {
@@ -43,16 +39,6 @@ public class EncryptActivity extends Activity implements GoogleApiClient.Connect
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
-
-        try {
-            CryptoLibrary.getLibrary().generateKey();
-
-        } catch (Exception e1) {
-
-            e1.printStackTrace();
-
-        }
 
         setContentView(R.layout.activity_encrypt);
 
@@ -92,7 +78,7 @@ public class EncryptActivity extends Activity implements GoogleApiClient.Connect
 
                 try {
 
-                    Raw.setText(encrypt(input.getText().toString()));
+                    Raw.setText(CryptoLibrary.getLibrary().encrypt("secure" ,input.getText().toString()));
 
                 } catch (Exception e) {
 
@@ -156,109 +142,6 @@ public class EncryptActivity extends Activity implements GoogleApiClient.Connect
 
 
 
-    private static byte[] encrypt(String text, PublicKey pubRSA)
 
-            throws Exception {
-
-        Cipher cipher = Cipher.getInstance(CryptoLibrary.getLibrary().RSA);
-
-        cipher.init(Cipher.ENCRYPT_MODE, pubRSA);
-
-        return cipher.doFinal(text.getBytes());
-
-    }
-
-
-    private final static String encrypt(String text) {
-
-        try {
-
-            return byte2hex(encrypt(text, CryptoLibrary.getLibrary().uk));
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-
-        }
-
-        return null;
-
-    }
-
-
-    private final static String decrypt(String data) {
-
-        try {
-
-            return new String(decrypt(hex2byte(data.getBytes())));
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-
-        }
-
-        return null;
-
-    }
-
-
-    private static byte[] decrypt(byte[] src) throws Exception {
-
-        Cipher cipher = Cipher.getInstance(CryptoLibrary.getLibrary().RSA);
-
-        cipher.init(Cipher.DECRYPT_MODE, CryptoLibrary.getLibrary().rk);
-
-        return cipher.doFinal(src);
-
-    }
-
-
-    private static String byte2hex(byte[] b) {
-
-        String hs = "";
-
-        String stmp = "";
-
-        for (int n = 0; n < b.length; n++) {
-
-            stmp = Integer.toHexString(b[n] & 0xFF);
-
-            if (stmp.length() == 1)
-
-                hs += ("0" + stmp);
-
-            else
-
-                hs += stmp;
-
-        }
-
-        return hs.toUpperCase();
-
-    }
-
-
-    private static byte[] hex2byte(byte[] b) {
-
-        if ((b.length % 2) != 0)
-
-            throw new IllegalArgumentException("hello");
-
-
-        byte[] b2 = new byte[b.length / 2];
-
-
-        for (int n = 0; n < b.length; n += 2) {
-
-            String item = new String(b, n, 2);
-
-            b2[n / 2] = (byte) Integer.parseInt(item, 16);
-
-        }
-
-        return b2;
-
-    }
 }
 

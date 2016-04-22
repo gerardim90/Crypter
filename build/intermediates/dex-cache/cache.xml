@@ -1,2 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<items version="2" />
+<items version="2" >
+
+    <item
+        jar="/home/gerard/AndroidStudioProjects/Crypter/wear/build/intermediates/exploded-aar/Crypter/common/unspecified/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="6e6eebb5654adcdab995e4eea17c7d4559cdd166">
+        <dex dex="/home/gerard/AndroidStudioProjects/Crypter/wear/build/intermediates/pre-dexed/release/Crypter-common-unspecified_c2e38be8d70a6249ebdb28486ef25b0130ecbcb7.jar" />
+    </item>
+    <item
+        jar="/home/gerard/AndroidStudioProjects/Crypter/mobile/build/intermediates/exploded-aar/Crypter/common/unspecified/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="6e6eebb5654adcdab995e4eea17c7d4559cdd166">
+        <dex dex="/home/gerard/AndroidStudioProjects/Crypter/mobile/build/intermediates/pre-dexed/release/Crypter-common-unspecified_4e445532374e5a339308795a287504407f4e4cd4.jar" />
+    </item>
+
+</items>
